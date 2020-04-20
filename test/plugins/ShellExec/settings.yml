@@ -1,0 +1,14 @@
+charset: utf-8
+msgPrefix: bash/
+darkListKeywords:
+- rm
+- sudo
+- shutdown
+- boot
+concurrentCommandCount: 10
+msgPrefixOverride: superBash/
+superCommanders: []
+allowedGroups: []
+darkListUsers: []
+msgPrefixPipe: pipe/
+msgPrefixPipeOverride: superPipe/

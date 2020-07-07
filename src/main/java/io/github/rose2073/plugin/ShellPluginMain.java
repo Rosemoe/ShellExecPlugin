@@ -7,6 +7,7 @@ import net.mamoe.mirai.console.command.CommandSender;
 import net.mamoe.mirai.console.plugins.Config;
 import net.mamoe.mirai.console.plugins.PluginBase;
 import net.mamoe.mirai.message.GroupMessage;
+import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageUtils;
 import net.mamoe.mirai.message.data.PlainText;
@@ -25,7 +26,7 @@ public class ShellPluginMain extends PluginBase {
 
     private final static List<String> DEFAULT_DARK_LIST;
     private Config config;
-    private ThreadInt runningThreadCount = new ThreadInt();
+    private final ThreadInt runningThreadCount = new ThreadInt();
     private final ThreadInt idAllocator = new ThreadInt();
     private final Map<Integer,Process> processMap = new ConcurrentHashMap<>();
 
@@ -91,12 +92,14 @@ public class ShellPluginMain extends PluginBase {
         return false;
     }
 
-    private void setupSender(InputStream is,GroupMessage event) {
+    private void setupSender(InputStream is, GroupMessageEvent event) {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is,config.getString("charset")));
             String line;
             while((line = br.readLine()) != null) {
-                event.getGroup().sendMessage(line);
+                if(!line.trim().isEmpty()) {
+                    event.getGroup().sendMessage(line);
+                }
             }
             br.close();
         }catch (IOException e) {
@@ -104,7 +107,7 @@ public class ShellPluginMain extends PluginBase {
         }
     }
 
-    private void input(int sessionId,String pure,GroupMessage event) {
+    private void input(int sessionId,String pure,GroupMessageEvent event) {
         Process process = processMap.get(sessionId);
         if(process != null) {
             try {
@@ -127,7 +130,7 @@ public class ShellPluginMain extends PluginBase {
         processMap.remove(sessionId);
     }
 
-    private boolean pipedExecuteCheck(GroupMessage event) {
+    private boolean pipedExecuteCheck(GroupMessageEvent event) {
         String msgContent = event.getMessage().contentToString().trim();
         //Clear source tag
         if(msgContent.startsWith("[mirai:source")) {
@@ -223,7 +226,7 @@ public class ShellPluginMain extends PluginBase {
     }
 
     public void initEvents() {
-        getEventListener().subscribeAlways((GroupMessage.class),(GroupMessage event) -> {
+        getEventListener().subscribeAlways((GroupMessageEvent.class),(GroupMessageEvent event) -> {
             if(pipedExecuteCheck(event)) {
                 return;
             }
@@ -349,8 +352,8 @@ public class ShellPluginMain extends PluginBase {
                             "/shellConfig banRemove <QQ>           解除封禁\n" +
                             "/shellConfig limit <最大线程数>        限定同时执行的最大线程数目\n" +
                             "/shellConfig prefix <前缀>            设定脚本执行的前缀\n" +
-                            "/shellConfig pipePrefix <前缀>        流式执行前缀" +
-                            "/shellConfig pipeSuperPrefix <前缀>    流式执行前缀,无视关键字" +
+                            "/shellConfig pipePrefix <前缀>        流式执行前缀\n" +
+                            "/shellConfig pipeSuperPrefix <前缀>    流式执行前缀,无视关键字\n" +
                             "/shellConfig superPrefix <前缀>       设定无视关键字限制执行脚本的前缀\n" +
                             "/shellConfig reload                   重载配置\n" +
                             "ShellExec 1.0.0 - By AbstractRose";
@@ -565,9 +568,4 @@ public class ShellPluginMain extends PluginBase {
         br.close();
     }
 
-    @Override
-    public boolean onReload() {
-        runningThreadCount = new ThreadInt();
-        return super.onReload();
-    }
 }

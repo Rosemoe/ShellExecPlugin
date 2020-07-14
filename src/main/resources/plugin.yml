@@ -1,6 +1,6 @@
 name: "ShellExec"
-author: "AbstractRose"
+author: "Rosemoe"
 version: "1.0.0"
-main: "io.github.rose2073.plugin.ShellPluginMain"
+main: "io.github.rosemoe.plugin.ShellPluginMain"
 info: "在群聊中执行本地Shell指令,支持黑名单用户,屏蔽关键字,指定用户不检查"
 depends: []

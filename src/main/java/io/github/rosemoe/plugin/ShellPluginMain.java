@@ -1,4 +1,4 @@
-package io.github.rose2073.plugin;
+package io.github.rosemoe.plugin;
 
 import kotlin.coroutines.Continuation;
 import net.mamoe.mirai.console.command.Command;
@@ -6,7 +6,6 @@ import net.mamoe.mirai.console.command.CommandManager;
 import net.mamoe.mirai.console.command.CommandSender;
 import net.mamoe.mirai.console.plugins.Config;
 import net.mamoe.mirai.console.plugins.PluginBase;
-import net.mamoe.mirai.message.GroupMessage;
 import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageUtils;
